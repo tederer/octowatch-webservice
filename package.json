@@ -1,0 +1,31 @@
+{
+   "name": "octowatch-webservice",
+   "version": "0.1.0",
+   "description": "web frontend of the OctoWatch camera project",
+   "author": {
+      "name": "Thomas Ederer",
+      "email": "thomas@orchideenvermehrung.at"
+   },
+   "licenses": [
+      {
+         "type": "MIT"
+      }
+   ],
+   "dependencies": {
+      "expect.js": "0.x",
+      "express": "^4.18.2",
+      "socket.io": "^4.7.4"
+   },
+   "devDependencies": {
+      "grunt": "^1.6.1",
+      "grunt-contrib-clean": "2.x",
+      "grunt-contrib-concat": "2.x",
+      "grunt-contrib-jshint": "3.x",
+      "grunt-mocha-test": "0.x"     
+   },
+   "scripts": {
+      "start": "./node_modules/.bin/grunt && node src/Main.js",
+      "lint": "./node_modules/.bin/grunt lint",
+      "test": "./node_modules/.bin/grunt test"
+   }
+}
