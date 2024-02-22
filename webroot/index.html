@@ -23,9 +23,6 @@
                   <a class="nav-link" id="video">video</a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" id="settings">settings</a>
-               </li>
-               <li class="nav-item">
                   <a class="nav-link" id="info">info</a>
                </li>
             </ul>
@@ -34,18 +31,40 @@
        
       <div id="status" class="p-2 bg-danger"></div>
       
-      <div id="videoTab" class="container text-center">
-            <div class="row justify-content-md-center">
-               <div class="col col-lg-2"></div>
-               <div class="col-md-auto">
-                  <img src="/video" alt="video stream" class="img-fluid mt-2">
+      <div id="videoTab" class="p-2 container text-center">
+         <div class="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">settings</button>
+            
+            <div id="settingsOverlay" class="dropdown-menu p-4">
+               <button id="controlButton" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">select a control</button>
+               <ul id="controlDropDown" class="dropdown-menu"></ul>
+               <div class="my-2">
+                  <label class="form-label">current value:</label>
+                  <label id="currentValueLabel" class="form-label"></label>
                </div>
-               <div class="col col-lg-2"></div>
+               <div class="mb-2">
+                  <label class="form-label">type:</label>
+                  <label id="typeLabel" class="form-label"></label>
+               </div>
+               <div class="mb-2">
+                  <label class="form-label">range:</label>
+                  <label id="rangeLabel" class="form-label"></label>
+               </div>
+               <div class="mb-2">
+                  <input type="password" class="form-control" id="newValueInput" placeholder="new value">
+               </div>
+               <button id="setValueButton" class="btn btn-primary">set value</button>
             </div>
-      </div>
-
-      <div id="settingsTab" class="container d-none mt-2">
-      some settings
+            
+         </div>      
+         
+         <div class="row justify-content-md-center">
+            <div class="col col-lg-2"></div>
+            <div class="col-md-auto">
+               <img src="/video" alt="video stream" class="img-fluid mt-2">
+            </div>
+            <div class="col col-lg-2"></div>
+         </div>
       </div>
 
       <div id="infoTab" class="container d-none mt-2">

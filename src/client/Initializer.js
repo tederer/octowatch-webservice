@@ -60,11 +60,10 @@ $( document ).ready(async function() {
    
    new octowatch.InfoTab(bus, '#infoTab');
    new octowatch.StatusDiv(bus, '#status');
+   new octowatch.SettingsOverlay(bus);
    
    var config = await loadConfiguration();
    bus.publish(octowatch.client.topics.configuration, config);
    
    $('#navbarToggler a').click(showTab);
-   
-   bus.subscribeToPublication(octowatch.shared.topics.camera.capabilities, console.log);
 });

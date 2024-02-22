@@ -3,25 +3,25 @@
 assertNamespace('octowatch');
 
 octowatch.InfoTab = function InfoTab(bus, cssSelector) {
-    var initialized = false;
-    
-    var initializeTab = function initializeTab(config) {
-        if (initialized) {
-            return;
-        }
+   var initialized = false;
 
-        initialized = true;
+   var initializeTab = function initializeTab(config) {
+      if (initialized) {
+         return;
+      }
 
-        var htmlContent = 'version = ' + config.version;
-    
-        $(cssSelector).html(htmlContent);
-    };
+      initialized = true;
 
-    var onConfigReceived = function onConfigReceived(config) {
-        if (config) {
-            initializeTab(config);
-        }
-    };
+      var htmlContent = 'version = ' + config.version;
 
-    bus.subscribeToPublication(octowatch.client.topics.configuration, onConfigReceived);    
+      $(cssSelector).html(htmlContent);
+   };
+
+   var onConfigReceived = function onConfigReceived(config) {
+      if (config) {
+         initializeTab(config);
+      }
+   };
+
+   bus.subscribeToPublication(octowatch.client.topics.configuration, onConfigReceived);    
 };
