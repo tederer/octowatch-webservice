@@ -13,6 +13,7 @@ octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
    var reconnectTimeoutInMs = FIRST_RECONNECT_TIMEOUT_IN_MS;
    var listener;
    var nextLine = '';
+   var socket;
    
    var reconnect; // declaring the function here to avoid linter errors
    
@@ -24,12 +25,14 @@ octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
    
    var onError = function onError(error) {
       logger.logError(error);
+      socket = undefined;
       ifListenerExists(listener => listener.onDisconnected());
       reconnect();
    };
    
    var onConnectionLost = function onConnectionLost() {
       logger.logInfo('connection lost');
+      socket = undefined;
       ifListenerExists(listener => listener.onDisconnected());
       reconnect();
    };
@@ -65,7 +68,7 @@ octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
    
    var connect = function connect() {
       logger.logInfo('connecting to ' + host + ':' + port);
-      var socket = net.connect(port, host);
+      socket = net.connect(port, host);
       socket.setEncoding('utf8');
       socket.on('error',   onError);
       socket.on('end',     onConnectionLost);
@@ -78,6 +81,19 @@ octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
       setTimeout(connect, reconnectTimeoutInMs);
       if (reconnectTimeoutInMs <= 1000) {
          reconnectTimeoutInMs *= 2;
+      }
+   };
+   
+   this.sendCommand = function sendCommand(command) {
+      if (socket === undefined) {
+         logger.logWarning('ignoring command because not connected');
+         return;
+      }
+      
+      var commandAsString = JSON.stringify(command);
+      logger.logInfo('sending:' + commandAsString);
+      if(!socket.write(commandAsString + '\n')) {
+         logger.logError('failed to send command: ' + commandAsString);
       }
    };
    

@@ -2,7 +2,7 @@
 
 $( document ).ready(async function() {
    const bus               = new common.infrastructure.bus.Bus();
-   const topicsToTransmit  = [];
+   const topicsToTransmit  = [octowatch.shared.topics.camera.setCurrentValueCommand];
    
    new common.infrastructure.busbridge.ClientSocketIoBusBridge(bus, topicsToTransmit, io);
 

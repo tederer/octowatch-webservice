@@ -9,6 +9,7 @@
       <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
       <script src="/lib/socket_io_4.7.4/socket.io.min.js"></script>
       <script src="javascripts/octoWatch.js"></script>
+      <link rel="stylesheet" type="text/css" href="./css/style.css"/>
    </head>
    <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-success p-2">
@@ -51,7 +52,11 @@
                   <label id="rangeLabel" class="form-label"></label>
                </div>
                <div class="mb-2">
-                  <input type="password" class="form-control" id="newValueInput" placeholder="new value">
+                  <label class="form-label">default value:</label>
+                  <label id="defaultValueLabel" class="form-label"></label>
+               </div>
+               <div class="mb-2">
+                  <input id="newValueInput" type="number" step="0.1" class="form-control" placeholder="new value" required>
                </div>
                <button id="setValueButton" class="btn btn-primary">set value</button>
             </div>

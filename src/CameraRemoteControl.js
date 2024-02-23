@@ -35,8 +35,14 @@ octowatch.CameraRemoteControl = function CameraRemoteControl(bus, host, port) {
       }
    };
    
+   var onSetValueCommand = function onSetValueCommand(command) {
+      connection.sendCommand(command);
+   };
+   
    this.start = function start() {
       connection = new octowatch.LineBasedTcpConnection(host, port);
       connection.start(this);
    };
+   
+   bus.subscribeToCommand(octowatch.shared.topics.camera.setCurrentValueCommand, onSetValueCommand);
 };

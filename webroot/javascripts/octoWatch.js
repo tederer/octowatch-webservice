@@ -488,7 +488,7 @@ octowatch.InfoTab = function InfoTab(bus, cssSelector) {
 
 $( document ).ready(async function() {
    const bus               = new common.infrastructure.bus.Bus();
-   const topicsToTransmit  = [];
+   const topicsToTransmit  = [octowatch.shared.topics.camera.setCurrentValueCommand];
    
    new common.infrastructure.busbridge.ClientSocketIoBusBridge(bus, topicsToTransmit, io);
 
@@ -557,20 +557,39 @@ $( document ).ready(async function() {
 
 assertNamespace('octowatch');
 
-octowatch.Control = function Control(name, minimumValue, maximumValue, defaultValue) {
+octowatch.Control = function Control(name, type, minimumValue, maximumValue, defaultValue) {
    var currentValue;
    
    this.setCurrentValue = function setCurrentValue(value) {
       currentValue = value;
-      console.log(name + ' = ' + currentValue);
    };
    
    this.getCurrentValue = function getCurrentValue() {
       return currentValue;
    };
    
+   this.getMinimumValue = function getMinimumValue() {
+      return minimumValue;
+   };
+   
+   this.getMaximumValue = function getMaximumValue() {
+      return maximumValue;
+   };
+   
+   this.getDefaultValue = function getDefaultValue() {
+      return defaultValue;
+   };
+   
+   this.getType = function getType() {
+      return type;
+   };
+   
    this.getRange = function getRange() {
       return '[' + minimumValue + ', ' + maximumValue + ']';
+   };
+   
+   this.isValidValue = function isValidValue(value) {
+      return (!Number.isNaN(value) && (value !== '') && (value >= minimumValue) && (value <= maximumValue));
    };
 };
 
@@ -583,7 +602,13 @@ octowatch.SettingsOverlay = function SettingsOverlay(bus) {
    
    var updateDisplayedCurrentValue = function updateDisplayedCurrentValue() {
       if (selectedControlKey !== undefined) {
-         $(cssSelectorPrefix + '#currentValueLabel').html(controls[selectedControlKey].getCurrentValue() ?? 'n.a');
+         var control = controls[selectedControlKey];
+         $(cssSelectorPrefix + '#currentValueLabel').html(control.getCurrentValue() ?? 'n.a');
+         $(cssSelectorPrefix + '#newValueInput').attr('min', control.getMinimumValue());
+         $(cssSelectorPrefix + '#newValueInput').attr('max', control.getMaximumValue());
+         $(cssSelectorPrefix + '#newValueInput').val('');
+         $(cssSelectorPrefix + '#typeLabel').html(controls[selectedControlKey].getType());
+         $(cssSelectorPrefix + '#defaultValueLabel').html(controls[selectedControlKey].getDefaultValue());
       }
    };
    
@@ -595,9 +620,28 @@ octowatch.SettingsOverlay = function SettingsOverlay(bus) {
       updateDisplayedCurrentValue();
    };
    
-   var onCurrentValuesReceived = function onCurrentValuesReceived(currentValues) {
-      console.log(currentValues);
+   var onSetValueButtonClicked = function onSetValueButtonClicked() {
+      if (selectedControlKey === undefined) {
+         return;
+      }
       
+      var newValue = $(cssSelectorPrefix + '#newValueInput').val() * 1;
+      
+      if (!controls[selectedControlKey].isValidValue(newValue)) {
+         console.log('ignoring request to set value because new value (' + newValue + ') is invalid');
+         return;
+      }
+      
+      var command =  {  type: 'setControl', 
+                        content: {
+                           'control': selectedControlKey, 
+                           'value':   newValue
+                     }};
+                     
+      bus.sendCommand(octowatch.shared.topics.camera.setCurrentValueCommand, command);
+   };
+   
+   var onCurrentValuesReceived = function onCurrentValuesReceived(currentValues) {
       if (Object.keys(controls).length === 0) {
          pendingCurrentValues = currentValues;
          return;
@@ -611,13 +655,11 @@ octowatch.SettingsOverlay = function SettingsOverlay(bus) {
    };
    
    var onCapabilitiesReceived = function onCapabilitiesReceived(capabilities) {
-      console.log(capabilities);
-      
       var htmlContent = '';
       
       for(var key in (capabilities ?? {})) {
          var capability = capabilities[key];
-         controls[key] = new octowatch.Control(key, capability.minimum, capability.maximum, capability.default);
+         controls[key] = new octowatch.Control(key, capability.type, capability.minimum, capability.maximum, capability.default);
          htmlContent += '<li><a id="' + key + '" class="dropdown-item" href="#">' + key + '</a></li>';
          if (pendingCurrentValues !== undefined) {
             controls[key].setCurrentValue(pendingCurrentValues[key]);
@@ -630,35 +672,10 @@ octowatch.SettingsOverlay = function SettingsOverlay(bus) {
    };
    
    $(cssSelectorPrefix + '#controlDropDown').on('click', onControlSelected);
+   $(cssSelectorPrefix + '#setValueButton').on('click', onSetValueButtonClicked);
    
    bus.subscribeToPublication(octowatch.shared.topics.camera.capabilities,  onCapabilitiesReceived);  
    bus.subscribeToPublication(octowatch.shared.topics.camera.currentValues, onCurrentValuesReceived);
-};
-
-assertNamespace('octowatch');
-
-octowatch.SettingsTab = function SettingsTab(bus, cssSelector) {
-    var initialized = false;
-    
-    var initializeTab = function initializeTab(config) {
-        if (initialized) {
-            return;
-        }
-
-        initialized = true;
-
-        var htmlContent = 'version = ' + config.version;
-    
-        $(cssSelector).html(htmlContent);
-    };
-
-    var onConfigReceived = function onConfigReceived(config) {
-        if (config) {
-            initializeTab(config);
-        }
-    };
-
-    bus.subscribeToPublication(octowatch.client.topics.configuration, onConfigReceived);    
 };
 
 assertNamespace('octowatch');
@@ -721,5 +738,10 @@ assertNamespace('octowatch.shared.topics.camera');
 octowatch.shared.topics.camera.capabilities = '/shared/camera/capabilities';
 
 octowatch.shared.topics.camera.currentValues = '/shared/camera/currentValues';
+
+
+//                COMMANDS
+
+octowatch.shared.topics.camera.setCurrentValueCommand = '/shared/camera/setCurrentValueCommand';
 
 common.logging.ConsoleLogger.prototype = new common.logging.Logger();

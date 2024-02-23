@@ -9,3 +9,8 @@ assertNamespace('octowatch.shared.topics.camera');
 octowatch.shared.topics.camera.capabilities = '/shared/camera/capabilities';
 
 octowatch.shared.topics.camera.currentValues = '/shared/camera/currentValues';
+
+
+//                COMMANDS
+
+octowatch.shared.topics.camera.setCurrentValueCommand = '/shared/camera/setCurrentValueCommand';
