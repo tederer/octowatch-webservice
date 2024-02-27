@@ -4,6 +4,7 @@ require('./common/infrastructure/bus/Bus.js');
 require('./common/infrastructure/busbridge/ServerSocketIoBusBridge.js');
 require('./common/logging/LoggingSystem.js');
 require('./common/Version.js');
+require('./CameraMonitoring.js');
 require('./CameraRemoteControl.js');
 require('./SharedTopics.js');
 
@@ -23,7 +24,7 @@ LOGGER.logInfo('webserver port: ' + port);
 const app = express();
 
 app.use((req, res, next) => {
-   console.log(req.method + ' ' + req.originalUrl);
+   LOGGER.logDebug(req.method + ' ' + req.originalUrl);
    //res.append('Access-Control-Allow-Origin', '*');
    next();
 });
@@ -43,7 +44,8 @@ var httpServer = app.listen(port, () => {
 });
 
 const topicsToTransmit  = [octowatch.shared.topics.camera.capabilities, 
-                           octowatch.shared.topics.camera.currentValues];
+                           octowatch.shared.topics.camera.currentValues,
+                           octowatch.shared.topics.camera.monitoringData];
                            
 const { Server }        = require('socket.io');
 const io                = new Server(httpServer);
@@ -52,4 +54,4 @@ new common.infrastructure.busbridge.ServerSocketIoBusBridge(bus, topicsToTransmi
 var cameraRemoteControl = new octowatch.CameraRemoteControl(bus, '192.168.0.105', 8889);
 cameraRemoteControl.start();
 
-bus.publish(octowatch.shared.topics.camera.capabilities, 'hello world');
+new octowatch.CameraMonitoring(bus);

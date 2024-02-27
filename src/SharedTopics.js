@@ -10,6 +10,8 @@ octowatch.shared.topics.camera.capabilities = '/shared/camera/capabilities';
 
 octowatch.shared.topics.camera.currentValues = '/shared/camera/currentValues';
 
+octowatch.shared.topics.camera.monitoringData = '/shared/camera/monitoringData';
+
 
 //                COMMANDS
 
