@@ -18,24 +18,21 @@ octowatch.CameraMonitoring = function CameraMonitoring(bus) {
          return;
       }
       
-      if ((lastMonitoringData ?? {}).id !== jsonData.id) {
-         lastMonitoringData = jsonData;
-         bus.publish(octowatch.shared.topics.camera.monitoringData, jsonData);
-      }
+      bus.publish(octowatch.shared.topics.camera.monitoringData, jsonData);
    };
    
    var scheduleNextRead = function scheduleNextRead(startOfReadOperation) {
       var timeoutInMs = 0;
       if (startOfReadOperation !== undefined) {
          var readDuration = Date.now() - startOfReadOperation;
-         timeoutInMs = Math.max(0, POLLING_INTERVAL_IN_MS - readDuration);
+         timeoutInMs      = Math.max(0, POLLING_INTERVAL_IN_MS - readDuration);
       }
       setTimeout(getMonitoringData, timeoutInMs);
    };
    
    getMonitoringData = async function getMonitoringData() {
       var startOfReadOperation = Date.now();
-      http.get('http://localhost:9090/jsonData')
+      http.get('http://127.0.0.1:9090/jsonData')
          .then(jsonData => {
             LOGGER.logDebug('JSON data: ' + JSON.stringify(jsonData));
             onNewMonitoringData(jsonData);

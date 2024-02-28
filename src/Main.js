@@ -51,7 +51,7 @@ const { Server }        = require('socket.io');
 const io                = new Server(httpServer);
 new common.infrastructure.busbridge.ServerSocketIoBusBridge(bus, topicsToTransmit, io);
 
-var cameraRemoteControl = new octowatch.CameraRemoteControl(bus, '192.168.0.105', 8889);
+var cameraRemoteControl = new octowatch.CameraRemoteControl(bus, '127.0.0.1', 8889);
 cameraRemoteControl.start();
 
 new octowatch.CameraMonitoring(bus);
