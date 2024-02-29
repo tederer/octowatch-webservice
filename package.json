@@ -24,7 +24,8 @@
       "grunt-mocha-test": "0.x"     
    },
    "scripts": {
-      "start": "./node_modules/.bin/grunt && node src/Main.js",
+      "build": "./node_modules/.bin/grunt",
+      "start": "node src/Main.js",
       "lint": "./node_modules/.bin/grunt lint",
       "test": "./node_modules/.bin/grunt test"
    }
