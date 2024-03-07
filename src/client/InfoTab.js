@@ -15,17 +15,21 @@ octowatch.InfoTab = function InfoTab(bus, cssSelector) {
       }
       
       ['cpu', 'gpu', 'env'].forEach(key => {
-         var tuple       = lastMonitoringData.temperatures[key] ?? {};
-         var temperature = tuple.value ?? 'n.a.';
-         var timestamp   = tuple.timestamp ?? 0;
+         var data        = lastMonitoringData.temperatures[key] ?? {};
+         var temperature = data.value ?? 'n.a.';
+         var timestamp   = data.timestamp ?? 0;
          
          if ((nowInMs - timestamp) >= TIMEOUT_IN_MS) {
             temperature = 'n.a.';
          } else {
-            temperature = tuple.value.toFixed(1) + ' °C';
+            temperature = data.value.toFixed(1) + ' °C';
          }
          
          $(cssSelector + ' #' + key + 'Temperature').html(temperature);
+         if (key === 'env') {
+            var tooHigh = '' + (data.tooHigh ?? 'n.a.');
+            $(cssSelector + ' #' + key + 'TemperatureTooHigh').html(tooHigh);
+         }
       });
       
       var humidityTuple     = lastMonitoringData.humidity ?? {};
