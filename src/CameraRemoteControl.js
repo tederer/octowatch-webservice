@@ -10,13 +10,20 @@ assertNamespace('octowatch');
 octowatch.CameraRemoteControl = function CameraRemoteControl(bus, host, port) {
    var logger = common.logging.LoggingSystem.createLogger('CameraRemoteControl');
    var connection;
+   var connected = false;
    
    this.onConnected = function onConnected() {
-      logger.logInfo('connected');
+      if (!connected) {
+         connected = true;
+         logger.logInfo('connected');
+      }
    };
    
    this.onDisconnected = function onDisconnected() {
-      logger.logInfo('disconnected');
+      if (connected) {
+         connected = false;
+         logger.logInfo('disconnected');
+      }
    };
    
    this.onMessage = function onMessage(message) {

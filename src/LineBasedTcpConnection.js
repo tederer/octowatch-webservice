@@ -9,7 +9,7 @@ assertNamespace('octowatch');
 octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
    var FIRST_RECONNECT_TIMEOUT_IN_MS = 100;
    
-   var logger = common.logging.LoggingSystem.createLogger('TcpConnection');
+   var logger = common.logging.LoggingSystem.createLogger('LineBasedTcpConnection');
    var reconnectTimeoutInMs = FIRST_RECONNECT_TIMEOUT_IN_MS;
    var listener;
    var nextLine = '';
@@ -67,7 +67,7 @@ octowatch.LineBasedTcpConnection = function LineBasedTcpConnection(host, port) {
    };
    
    var connect = function connect() {
-      logger.logInfo('connecting to ' + host + ':' + port);
+      logger.logDebug('connecting to ' + host + ':' + port);
       socket = net.connect(port, host);
       socket.setEncoding('utf8');
       socket.on('error',   onError);
