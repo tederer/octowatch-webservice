@@ -101,15 +101,14 @@ octowatch.SettingsOverlay = function SettingsOverlay(bus) {
    
    var onCapabilitiesReceived = function onCapabilitiesReceived(capabilities) {
       var htmlContent = '';
-      
-      for(var key in (capabilities ?? {})) {
+      Object.keys(capabilities ?? {}).sort().forEach(key => {
          var capability = capabilities[key];
          controls[key] = new octowatch.Control(key, capability.type, capability.minimum, capability.maximum, capability.default);
          htmlContent += '<li><a id="' + key + '" class="dropdown-item" href="#">' + key + '</a></li>';
          if (pendingCurrentValues !== undefined) {
             controls[key].setCurrentValue(pendingCurrentValues[key]);
          }
-      }
+      });
       
       pendingCurrentValues = undefined;
       
