@@ -30,7 +30,7 @@ octowatch.InfraredLight = function InfraredLight(initialLightLevel) {
    };   
    
    startPythonProcess = function startPythonProcess() {
-      pythonProcess = childprocess.exec('./setIrLightLevel.py', (error, stdout, stderr) => {
+      pythonProcess = childprocess.exec('sudo ./setIrLightLevel', (error, stdout, stderr) => {
          if (error) {
             LOGGER.logError('failed to start python code: ' + error);
             LOGGER.logError('stderr: ' + stderr);
@@ -38,17 +38,17 @@ octowatch.InfraredLight = function InfraredLight(initialLightLevel) {
       });
       
       pythonProcess.on('spawn', () => {
-         LOGGER.logError('python process spawned successfully');
+         LOGGER.logInfo('python process spawned successfully');
          thisInstance.setLevel(lightLevel);  
       });
       
       pythonProcess.on('close', code => {
-         LOGGER.logError('python process closed with exit code ' + code);
+         LOGGER.logInfo('python process closed with exit code ' + code);
          restartPythonProcess();      
       });
       
       pythonProcess.on('exit', code => {
-         LOGGER.logError('python process exited with exit code ' + code);
+         LOGGER.logInfo('python process exited with exit code ' + code);
          restartPythonProcess();      
       });
       

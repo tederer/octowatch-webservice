@@ -9,10 +9,13 @@ require('./InfraredLight.js');
 assertNamespace('octowatch');
 
 octowatch.CameraRemoteControl = function CameraRemoteControl(bus, host, port) {
-   var logger             = common.logging.LoggingSystem.createLogger('CameraRemoteControl');
-   var infraredLight      = new octowatch.InfraredLight(0);
-   var infraredLightLevel = 0;
-   var connected          = false;
+   const IR_LIGHT                   = 'InfraredLight';
+   var logger                       = common.logging.LoggingSystem.createLogger('CameraRemoteControl');
+   var infraredLight                = new octowatch.InfraredLight(0);
+   var infraredLightLevel           = 0;
+   var connected                    = false;
+   var lastSentCurrentValuesMessage = {};
+   var thisInstance                 = this;
    var connection;
    
    this.onConnected = function onConnected() {
@@ -39,11 +42,14 @@ octowatch.CameraRemoteControl = function CameraRemoteControl(bus, host, port) {
       
       if (messageTypeLowerCase === 'capabilities') {
          var extendedMessage = message.content ?? {};
-         extendedMessage.InfraredLight = { type: 'float', minimum: 0, maximum: 1, default: 0 };
+         extendedMessage[IR_LIGHT] = { type: 'float', minimum: 0, maximum: 1, default: 0 };
          bus.publish(octowatch.shared.topics.camera.capabilities, extendedMessage);
       }
       if (messageTypeLowerCase === 'currentvalues') {
-         bus.publish(octowatch.shared.topics.camera.currentValues, message.content ?? {});
+         var messageToSend = message.content ?? {};
+         messageToSend[IR_LIGHT] = infraredLightLevel;
+         bus.publish(octowatch.shared.topics.camera.currentValues, messageToSend);
+         lastSentCurrentValuesMessage = messageToSend;
       }
    };
    
@@ -53,10 +59,11 @@ octowatch.CameraRemoteControl = function CameraRemoteControl(bus, host, port) {
       }
       infraredLightLevel = levelToSet;
       infraredLight.setLevel(levelToSet);
+      thisInstance.onMessage({type: 'currentvalues', content: lastSentCurrentValuesMessage});
    };
    
    var onSetValueCommand = function onSetValueCommand(command) {
-      if (command.content.control === 'InfraredLight') {
+      if (command.content.control === IR_LIGHT) {
          setInfraredLightLevel(command.content.value * 1);
       } else {
          connection.sendCommand(command);
