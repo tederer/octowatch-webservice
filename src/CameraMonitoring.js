@@ -39,7 +39,7 @@ octowatch.CameraMonitoring = function CameraMonitoring(bus) {
             scheduleNextRead(startOfReadOperation);
          })
          .catch(error => {
-            LOGGER.logError('failed to read temperature file: ' + error);
+            LOGGER.logError('failed to read monitoring data: ' + error);
             scheduleNextRead(startOfReadOperation);
          });
    };
