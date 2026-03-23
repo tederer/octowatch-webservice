@@ -11,8 +11,10 @@ The following steps describe how to install the monitoring service on your Raspb
 
 1. Execute `sudo apt-get update`.
 2. Execute `sudo apt install nodejs npm` to install the JavaScript runtime environment.
-5.  Clone this repository
-6.  Execute `build.sh`
+3. Navigate to your home folder by executing `cd`.
+4. Execute `git clone https://github.com/tederer/octowatch-webservice.git` to clone this repository.
+5. Execute `cd ./octowatch-webservice` to navigate to root folder of the project.
+6. Execute `build.sh` to install all dependencies ond build the project.
 
 ## Starting the service
 
