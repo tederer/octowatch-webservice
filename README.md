@@ -22,7 +22,7 @@ Execute `start.sh`.
 
 ## Starting the service automatically
 
-To enable automatic start at system boot, create a file called `octowatch-irlightcontrol.service` in `/usr/lib/systemd/system` containing the following content (replace `<user>`, `<group>` and `<user-home>` with the corresponding values for your system):
+To enable automatic start at system boot, create a file called `octowatch-webserver.service` in `/usr/lib/systemd/system` containing the following content (replace `<user>`, `<group>` and `<user-home>` with the corresponding values for your system):
 
 ```
 [ Unit ]
