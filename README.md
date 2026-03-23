@@ -19,3 +19,22 @@ The following steps describe how to install the monitoring service on your Raspb
 ## Starting the service
 
 Execute `start.sh`.
+
+## Starting the service automatically
+
+To enable automatic start at system boot, create a file called `octowatch-irlightcontrol.service` in `/usr/lib/systemd/system` containing the following content (replace `<user>`, `<group>` and `<user-home>` with the corresponding values for your system):
+
+```
+[ Unit ]
+Description = OctoWatch WebServer Service
+After = network-online.target
+Wants = network-online.target
+
+[ Service ]
+Type = simple
+User = <user>
+Group =<group>
+ExecStart = <user-home>/octowatch-webservice/start.sh
+
+[ Install ]
+WantedBy = multi-user.target
