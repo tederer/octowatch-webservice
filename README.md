@@ -33,7 +33,7 @@ Wants = network-online.target
 [ Service ]
 Type = simple
 User = <user>
-Group =<group>
+Group = <group>
 ExecStart = <user-home>/octowatch-webservice/start.sh
 
 [ Install ]
